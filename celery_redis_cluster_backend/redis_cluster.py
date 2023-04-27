@@ -37,6 +37,10 @@ __all__ = ['RedisClusterBackend']
 logger = get_logger(__name__)
 error = logger.error
 
+E_REDIS_MISSING = """
+You need to install the redis library in order to use \
+the Redis result store backend.
+"""
 
 class RedisClusterBackend(KeyValueStoreBackend):
     """Redis task result store."""
@@ -53,6 +57,11 @@ class RedisClusterBackend(KeyValueStoreBackend):
     def __init__(self, *args, **kwargs):
         super(RedisClusterBackend, self).__init__(expires_type=int, **kwargs)
         conf = self.app.conf
+
+
+        if self.redis is None:
+            raise ImproperlyConfigured(E_REDIS_MISSING.strip())
+
 
         # For compatibility with the old REDIS_* configuration keys.
         def _get(key):

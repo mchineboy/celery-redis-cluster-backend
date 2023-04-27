@@ -41,6 +41,7 @@ error = logger.error
 class RedisClusterBackend(KeyValueStoreBackend):
     """Redis task result store."""
 
+    redis = redis
     startup_nodes = None
     max_connections = None
     init_slot_cache = True
@@ -199,7 +200,7 @@ class RedisClusterBackend(KeyValueStoreBackend):
 
     @cached_property
     def client(self):
-        return redis.RedisCluster(**self.conn_params)
+        return self.redis.RedisCluster(**self.conn_params)
 
     def __reduce__(self, args=(), kwargs={}):
         return super(RedisClusterBackend, self).__reduce__(
